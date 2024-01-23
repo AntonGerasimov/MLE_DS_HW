@@ -10,6 +10,7 @@ import os
 import sys
 from datetime import datetime
 import torch
+import time
 
 import pandas as pd
 
@@ -45,6 +46,8 @@ def get_latest_model_path() -> str:
     latest = None
     for (dirpath, dirnames, filenames) in os.walk(MODEL_DIR):
         for filename in filenames:
+            if not filename.endswith('.pth'):
+                continue
             if not latest or datetime.strptime(latest, conf['general']['datetime_format'] + '.pth') < \
                     datetime.strptime(filename, conf['general']['datetime_format'] + '.pth'):
                 latest = filename
@@ -108,14 +111,16 @@ def main():
     configure_logging()
     args = parser.parse_args()
 
+
+    logging.info(f"Path {get_latest_model_path()}")
     model = get_model_by_path(get_latest_model_path())
     infer_file = args.infer_file
     infer_data = get_inference_data(os.path.join(DATA_DIR, infer_file))
+    start_time = time.time()
     results = predict_results(model, infer_data)
+    end_time = time.time()
+    logging.info(f"Inference completed in {end_time - start_time} seconds.")
     store_results(results, args.out_path)
-
-    logging.info(f'Prediction results: {results}')
-
 
 if __name__ == "__main__":
     main()

@@ -153,7 +153,9 @@ class Training():
             test_losses[epoch] = loss_test.item()
 
             if (epoch + 1) % 20 == 0:
-                print(f"Epoch {epoch+1}/{num_epochs}, Train Loss: {loss_train.item():.4f}, Test Loss: {loss_test.item():.4f}")
+                logging.info(f"Epoch {epoch+1}/{num_epochs}, Train Loss: {loss_train.item():.4f}, Test Loss: {loss_test.item():.4f}")
+
+        logging.info(f"Final Training Loss: {train_losses[-1]:.4f}, Final Test Loss: {test_losses[-1]:.4f}")
         
         predictions_train = []
         with torch.no_grad():

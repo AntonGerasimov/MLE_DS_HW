@@ -37,6 +37,7 @@ class IrisSetLoader:
     def __init__(self):
         iris_data = load_iris()
         self.df = pd.DataFrame(iris_data.data, columns=load_iris().feature_names)
+        logging.info(f"Befor training and inference size of dataset is {self.df.size}")
         self.df['target'] = iris_data.target
         self.conf_file = "settings.json"
         self.load_config()
