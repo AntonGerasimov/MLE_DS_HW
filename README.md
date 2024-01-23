@@ -17,6 +17,7 @@ docker build -f ./inference/Dockerfile --build-arg model_name=IrisPredictionMode
 
 docker run -v /path_to_your_local_model_directory:/app/models -v /path_to_your_input_folder:/app/input -v /path_to_your_output_folder:/app/output inference_image
 
+docker run -it inference_image /bin/bash  
 
 Docker image creation may take up to 30 minutes on my machine (old macOS notebook)
 
