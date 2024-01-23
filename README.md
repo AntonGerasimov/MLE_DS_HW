@@ -1,8 +1,16 @@
 # Additional important info
 
 Firstly, you need to run data_gen.py script and load and generate data
-Then you may go to training docker
+Then you may go to training docker:
+
+docker build -f ./training/Dockerfile --build-arg settings_name=settings.json -t training_image .
+docker cp <container_id>:/app/models/ ./models
+Replace <container_id> with your running Docker container ID
+
+
 Then Inference docker
+docker build -f ./inference/Dockerfile --build-arg model_name=IrisPredictionModel --build-arg settings_name=settings.json -t inference_image .
+docker run -v /path_to_your_local_model_directory:/app/models -v /path_to_your_input_folder:/app/input -v /path_to_your_output_folder:/app/output inference_image
 
 
 Docker image creation may take up to 30 minutes on my machine (old macOS notebook)
