@@ -2,27 +2,25 @@
 Script loads the latest trained model, data for inference and predicts results.
 Imports necessary packages and modules.
 """
-
+import numpy as np
 import argparse
 import json
 import logging
 import os
-import pickle
 import sys
 from datetime import datetime
-from typing import List
+import torch
 
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
 
 # Adds the root directory to system path
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(ROOT_DIR))
 
-# Change to CONF_FILE = "settings.json" if you have problems with env variables
-CONF_FILE = os.getenv('CONF_PATH')
+# Change to CONF_FILE = os.getenv('CONF_PATH') if you have problems with env variables
+CONF_FILE = "settings.json"
 
-from utils import get_project_dir, configure_logging
+from utils import get_project_dir, configure_logging, IrisPredictionModel
 
 # Loads configuration settings from JSON
 with open(CONF_FILE, "r") as file:
@@ -47,19 +45,18 @@ def get_latest_model_path() -> str:
     latest = None
     for (dirpath, dirnames, filenames) in os.walk(MODEL_DIR):
         for filename in filenames:
-            if not latest or datetime.strptime(latest, conf['general']['datetime_format'] + '.pickle') < \
-                    datetime.strptime(filename, conf['general']['datetime_format'] + '.pickle'):
+            if not latest or datetime.strptime(latest, conf['general']['datetime_format'] + '.pth') < \
+                    datetime.strptime(filename, conf['general']['datetime_format'] + '.pth'):
                 latest = filename
     return os.path.join(MODEL_DIR, latest)
 
 
-def get_model_by_path(path: str) -> DecisionTreeClassifier:
+def get_model_by_path(path: str) -> IrisPredictionModel:
     """Loads and returns the specified model"""
     try:
-        with open(path, 'rb') as f:
-            model = pickle.load(f)
-            logging.info(f'Path of the model: {path}')
-            return model
+        model = IrisPredictionModel()
+        model.load_state_dict(torch.load(path))
+        return model
     except Exception as e:
         logging.error(f'An error occurred while loading the model: {e}')
         sys.exit(1)
@@ -75,10 +72,23 @@ def get_inference_data(path: str) -> pd.DataFrame:
         sys.exit(1)
 
 
-def predict_results(model: DecisionTreeClassifier, infer_data: pd.DataFrame) -> pd.DataFrame:
-    """Predict de results and join it with the infer_data"""
-    results = model.predict(infer_data)
-    infer_data['results'] = results
+def predict_results(model: IrisPredictionModel, infer_data: pd.DataFrame) -> pd.DataFrame:
+    """Predict the results and join it with the infer_data"""
+    features = infer_data.columns.drop('target')
+    data = infer_data[features]
+    data = torch.FloatTensor(data.values)    
+    results = model(data)
+    
+    predicted_classes = torch.argmax(results, dim=1)
+
+    # Convert the PyTorch tensor to a Python list
+    predicted_classes_list = predicted_classes.tolist()
+
+    logging.info(results)
+    logging.info(predicted_classes_list)
+    
+    infer_data['results'] = predicted_classes_list
+
     return infer_data
 
 
