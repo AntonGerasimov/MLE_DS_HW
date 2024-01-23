@@ -9,8 +9,9 @@
     },
     "train": {
         "table_name": "iris_train_data.csv",
-        "data_sample": 50,
-        "test_size": 0.3
+        "data_sample": 0,
+        "test_size": 0.3,
+        "num_epochs": 100
     },
     "inference": {
         "inp_table_name": "iris_inference_data.csv",
