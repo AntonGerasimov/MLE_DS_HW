@@ -1,8 +1,15 @@
 # Additional important info
 
+Firstly, you need to run data_gen.py script and load and generate data
+Then you may go to training docker
+Then Inference docker
+
+
 Docker image creation may take up to 30 minutes on my machine (old macOS notebook)
 
 For tests use: python -m unittest unittests.unittests
+
+
 
 
 
