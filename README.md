@@ -10,7 +10,9 @@ docker build -f ./training/Dockerfile --build-arg settings_name=settings.json -t
 
 docker cp <container_id>:/app/models/ ./
 
-Replace <container_id> with your running Docker container ID
+Replace <container_id> with your running Docker container ID, you can use
+
+docker run -it training_image /bin/bash
 
 
 Then Inference docker
