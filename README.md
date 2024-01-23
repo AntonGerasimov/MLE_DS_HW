@@ -31,6 +31,10 @@ Docker image creation may take up to 30 minutes on my machine (old macOS noteboo
 
 For tests use: python -m unittest unittests.unittests
 
+In case if issues with tests, use:
+
+pip install -r requirements.txt
+
 
 
 
