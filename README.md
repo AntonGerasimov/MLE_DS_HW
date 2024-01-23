@@ -4,7 +4,7 @@ Firstly, you need to run data_gen.py script and load and generate data
 Then you may go to training docker:
 
 docker build -f ./training/Dockerfile --build-arg settings_name=settings.json -t training_image .
-docker cp <container_id>:/app/models/ ./models
+docker cp <container_id>:/app/models/ ./
 Replace <container_id> with your running Docker container ID
 
 
