@@ -28,6 +28,10 @@ DATA_DIR = get_project_dir(conf['general']['data_dir'])
 TRAIN_PATH = os.path.join(DATA_DIR, conf['train']['table_name'])
 TEST_PATH = os.path.join(DATA_DIR, conf['inference']['inp_table_name'])
 
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(os.path.dirname(TRAIN_PATH), exist_ok=True)
+os.makedirs(os.path.dirname(TEST_PATH), exist_ok=True)
+
 @singleton
 class IrisSetLoader:
     def __init__(self):
